@@ -28,7 +28,6 @@ def curl(url, method):
 
 def main():
     url = '{}/_all'.format(BASE_URL)
-
     r = curl(url, 'get')
 
     for i in r.json().keys():
@@ -46,13 +45,13 @@ def main():
             dateString = datetime.strftime(d, "%Y.%m.%d")
             delIndex.append(dateString)
             url = '{}/logstash-{}'.format(BASE_URL, dateString)
-            curl(url, 'get')
+            curl(url, 'delete')
 
         d = {'Found': indexList, 'Deleted': delIndex}
         print(json.dumps(d, sort_keys=True))
 
     else:
-        print('indexes count < ' + str(days))
+        print('indexes count < ' + str(DAYS_KEEP_ES_DATA))
 
 
 if __name__ == '__main__':
