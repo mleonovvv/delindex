@@ -16,14 +16,17 @@ SCHEME = os.getenv('ES_SCHEME', 'http')
 BASE_URL = '{}://{}:{}'.format(SCHEME, ES_HOST, ES_PORT)
 maxDate = datetime.today() - timedelta(days=DAYS_KEEP_ES_DATA)
 
-
-def main():
+def get(url):
     try:
-        url = '{}/_all'.format(BASE_URL)
         r = requests.get(url)
     except requests.exceptions.ConnectionError as err:
         print('Error: {}'.format(err))
         sys.exit(1)
+    return r
+
+def main():
+    url = '{}/_all'.format(BASE_URL)
+    r = get(url)
 
     for i in r.json().keys():
         if 'logstash' in i:
@@ -40,12 +43,8 @@ def main():
             s = str(i)
             dateString = s.replace('-', '.')
             delIndex.append(dateString)
-            try:
-                url = '{}/logstash-{}'.format(BASE_URL, dateString)
-                r = requests.get(url)
-            except requests.exceptions.ConnectionError as err:
-                print('Error: {}'.format(err))
-                sys.exit(1)
+            url = '{}/logstash-{}'.format(BASE_URL, dateString)
+            get(url)
 
         d = {'Found': indexList, 'Deleted': delIndex}
         print(json.dumps(d, sort_keys=True))
