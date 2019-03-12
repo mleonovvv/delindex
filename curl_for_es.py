@@ -1,6 +1,7 @@
 import requests
 import re
 import datetime
+import json
 
 url = 'http://127.0.0.1:9200/_all'
 try:
@@ -27,10 +28,15 @@ if len(indexList) >= days:
 
   for i in expiryDateList:
       s = str(i)
+      delIndex = []
       dateString = s.replace('-', '.')
+      delIndex.append(dateString)
       #print("logstash-" + dateString)
       url = 'http://127.0.0.1:9200/' + 'logstash-' + dateString
       r = requests.get(url)
-      print(r.json())
+      #print(r.json())
+
+  d = {'Found': indexList, 'Deleted': delIndex}
+  print(json.dumps(d, sort_keys=True, indent=2))
 else:
     print("indexes count =< " + str(days))
