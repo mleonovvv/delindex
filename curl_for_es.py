@@ -2,6 +2,8 @@ import requests
 import re
 import datetime
 import json
+import os
+
 
 url = 'http://127.0.0.1:9200/_all'
 try:
@@ -11,14 +13,15 @@ except ConnectionRefusedError:
 
 indexList = [] # logstash-2019.02.21
 expiryDateList = []
-days = 18
-maxDate = datetime.date.today() - datetime.timedelta(days=days)
+delIndex = []
+days = os.getenv('DAYS_KEEP_ES_DATA', 14)
+maxDate = datetime.date.today() - datetime.timedelta(days=int(days))
 
 for i in r.json().keys():
     if re.search("logstash", i):
         indexList.append(i)
 
-if len(indexList) >= days:
+if len(indexList) > int(days):
 
   for l in indexList:
       dateREGroup = re.search('([0-9]{4})\.([0-9]{2})\.([0-9]{2})', l)
@@ -28,7 +31,6 @@ if len(indexList) >= days:
 
   for i in expiryDateList:
       s = str(i)
-      delIndex = []
       dateString = s.replace('-', '.')
       delIndex.append(dateString)
       #print("logstash-" + dateString)
@@ -38,5 +40,6 @@ if len(indexList) >= days:
 
   d = {'Found': indexList, 'Deleted': delIndex}
   print(json.dumps(d, sort_keys=True, indent=2))
+
 else:
-    print("indexes count =< " + str(days))
+    print("indexes count < " + str(days))
