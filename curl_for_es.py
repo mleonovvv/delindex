@@ -1,6 +1,6 @@
 import requests
 import re
-import datetime
+from datetime import datetime, timedelta
 import json
 import os
 import sys
@@ -12,14 +12,14 @@ delIndex = []
 DAYS_KEEP_ES_DATA = int(os.getenv('ES_KEEP_DAYS', 14))
 ES_PORT = int(os.getenv('ES_PORT', 9200))
 ES_HOST = os.getenv('ES_HOST', 'localhost')
-BASE_URL = '{}:{}'.format(ES_HOST, ES_PORT)
 SCHEME = os.getenv('ES_SCHEME', 'http')
-maxDate = datetime.date.today() - datetime.timedelta(days=DAYS_KEEP_ES_DATA)
+BASE_URL = '{}://{}:{}'.format(SCHEME, ES_HOST, ES_PORT)
+maxDate = datetime.today() - timedelta(days=DAYS_KEEP_ES_DATA)
 
 
 def main():
     try:
-        url = '{}://{}/_all'.format(SCHEME, BASE_URL)
+        url = '{}/_all'.format(BASE_URL)
         r = requests.get(url)
     except requests.exceptions.ConnectionError as err:
         print('Error: {}'.format(err))
@@ -32,11 +32,7 @@ def main():
     if len(indexList) > DAYS_KEEP_ES_DATA:
 
         for l in indexList:
-            dateREGroup = re.search(r'([0-9]{4})\.([0-9]{2})\.([0-9]{2})', l)
-            d = datetime.date(
-                int(dateREGroup.group(1)),
-                int(dateREGroup.group(2)),
-                int(dateREGroup.group(3)))
+            d = datetime.strptime(l, "logstash-%Y.%m.%d")
             if d <= maxDate:
                 expiryDateList.append(d)
 
@@ -45,10 +41,7 @@ def main():
             dateString = s.replace('-', '.')
             delIndex.append(dateString)
             try:
-                url = '{}://{}/logstash-{}'.format(
-                        SCHEME,
-                        BASE_URL,
-                        dateString)
+                url = '{}/logstash-{}'.format(BASE_URL, dateString)
                 r = requests.get(url)
             except requests.exceptions.ConnectionError as err:
                 print('Error: {}'.format(err))

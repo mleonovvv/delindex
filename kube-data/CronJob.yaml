@@ -20,4 +20,5 @@ spec:
                 value: "es-elasticsearch-client"
               - name: ES_SCHEME
                 value: "http"
+            imagePullPolicy: Always
           restartPolicy: OnFailure
