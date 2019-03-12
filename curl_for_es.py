@@ -16,6 +16,7 @@ SCHEME = os.getenv('ES_SCHEME', 'http')
 BASE_URL = '{}://{}:{}'.format(SCHEME, ES_HOST, ES_PORT)
 maxDate = datetime.today() - timedelta(days=DAYS_KEEP_ES_DATA)
 
+
 def get(url):
     try:
         r = requests.get(url)
@@ -23,6 +24,7 @@ def get(url):
         print('Error: {}'.format(err))
         sys.exit(1)
     return r
+
 
 def main():
     url = '{}/_all'.format(BASE_URL)
