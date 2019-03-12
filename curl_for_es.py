@@ -19,19 +19,16 @@ maxDate = datetime.today() - timedelta(days=DAYS_KEEP_ES_DATA)
 
 def curl(url, method):
     try:
-        if method == 'get':
-            r = requests.get(url)
-        elif method == 'delete':
-            r = requests.delete(url)
-        else:
-            print('Unknow method : {}'.format(method))
+        r = requests.request(method, url)
     except requests.exceptions.ConnectionError as err:
         print('Error: {} {}'.format(url, err))
+        sys.exit(1)
     return r
 
 
 def main():
     url = '{}/_all'.format(BASE_URL)
+
     r = curl(url, 'get')
 
     for i in r.json().keys():
