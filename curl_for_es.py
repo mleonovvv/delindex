@@ -3,11 +3,6 @@ import re
 import datetime
 
 url = 'http://127.0.0.1:9200/_all'
-#r = requests.post(url, dict(
-#        From='+17035551212',
-#        To='+17035551212',
-#        Body='This is a test'), auth=('foo', 'bar'))
-#
 try:
     r = requests.get(url)
 except ConnectionRefusedError:
