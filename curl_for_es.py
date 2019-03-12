@@ -9,11 +9,11 @@ import sys
 indexList = []
 expiryDateList = []
 delIndex = []
-DAYS_KEEP_ES_DATA = int(os.getenv('DAYS_KEEP_ES_DATA', 14))
+DAYS_KEEP_ES_DATA = int(os.getenv('ES_KEEP_DAYS', 14))
 ES_PORT = int(os.getenv('ES_PORT', 9200))
 ES_HOST = os.getenv('ES_HOST', 'localhost')
 BASE_URL = '{}:{}'.format(ES_HOST, ES_PORT)
-SCHEME = 'http'
+SCHEME = os.getenv('ES_SCHEME', 'http')
 maxDate = datetime.date.today() - datetime.timedelta(days=DAYS_KEEP_ES_DATA)
 
 
