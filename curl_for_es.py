@@ -28,6 +28,9 @@ if len(indexList) >= days:
   for i in expiryDateList:
       s = str(i)
       dateString = s.replace('-', '.')
-      print("logstash-" + dateString)
+      #print("logstash-" + dateString)
+      url = 'http://127.0.0.1:9200/' + 'logstash-' + dateString
+      r = requests.get(url)
+      print(r.json())
 else:
     print("indexes count =< " + str(days))
