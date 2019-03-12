@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: delete-es-indexes
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: curlfores
+            image: mleonovvv/curlfores:0.1
+            env:
+              - name: ES_KEEP_DAYS
+                value: "14"
+              - name: ES_PORT
+                value: "9200"
+              - name: ES_HOST
+                value: "es-elasticsearch-client"
+              - name: ES_SCHEME
+                value: "http"
+          restartPolicy: OnFailure

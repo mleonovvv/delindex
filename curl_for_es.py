@@ -22,7 +22,7 @@ def main():
         url = '{}://{}/_all'.format(SCHEME, BASE_URL)
         r = requests.get(url)
     except requests.exceptions.ConnectionError as err:
-        print("Error: {}".format(err))
+        print('Error: {}'.format(err))
         sys.exit(1)
 
     for i in r.json().keys():
@@ -51,14 +51,14 @@ def main():
                         dateString)
                 r = requests.get(url)
             except requests.exceptions.ConnectionError as err:
-                print("Error: {}".format(err))
+                print('Error: {}'.format(err))
                 sys.exit(1)
 
         d = {'Found': indexList, 'Deleted': delIndex}
-        print(json.dumps(d, sort_keys=True, indent=2))
+        print(json.dumps(d, sort_keys=True))
 
     else:
-        print("indexes count < " + str(days))
+        print('indexes count < ' + str(days))
 
 
 if __name__ == '__main__':
