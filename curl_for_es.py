@@ -17,18 +17,22 @@ BASE_URL = '{}://{}:{}'.format(SCHEME, ES_HOST, ES_PORT)
 maxDate = datetime.today() - timedelta(days=DAYS_KEEP_ES_DATA)
 
 
-def get(url):
+def curl(url, method):
     try:
-        r = requests.get(url)
+        if method == 'get':
+            r = requests.get(url)
+        elif method == 'delete':
+            r = requests.delete(url)
+        else:
+            print('Unknow method : {}'.format(method))
     except requests.exceptions.ConnectionError as err:
-        print('Error: {}'.format(err))
-        sys.exit(1)
+        print('Error: {} {}'.format(url, err))
     return r
 
 
 def main():
     url = '{}/_all'.format(BASE_URL)
-    r = get(url)
+    r = curl(url, 'get')
 
     for i in r.json().keys():
         if 'logstash' in i:
@@ -41,12 +45,11 @@ def main():
             if d <= maxDate:
                 expiryDateList.append(d)
 
-        for i in expiryDateList:
-            s = str(i)
-            dateString = s.replace('-', '.')
+        for d in expiryDateList:
+            dateString = datetime.strftime(d, "%Y.%m.%d")
             delIndex.append(dateString)
             url = '{}/logstash-{}'.format(BASE_URL, dateString)
-            get(url)
+            curl(url, 'get')
 
         d = {'Found': indexList, 'Deleted': delIndex}
         print(json.dumps(d, sort_keys=True))
