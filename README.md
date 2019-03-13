@@ -7,4 +7,4 @@
 - ES_HOST (по умолчанию: localhost)
 - ES_SCHEME (по умолчанию: http)
 
-Предпологается использовать в kubernetes cronjob
+Предполaгается использовать в kubernetes cronjob
